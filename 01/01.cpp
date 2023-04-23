@@ -1,64 +1,46 @@
-﻿ // 01.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//
+﻿ // Домашнее задание к занятию «STL. Часть 1»
+// Задание 1. Частота символов.
 
 #include <iostream>
-#include <vector>
-#include <list>
 #include <string>
 #include <map>
-#include <algorithm>
+#include <set>
 
 template<class T>
-void printM(const T& m0)
+void printM(const T& m0, const std::string* letters)
 {
-    std::cout << "\nprintM0\n";
+    std::cout << "\nPrint Number Of Repetitions: " << *letters << std::endl;
     for (const auto& m : m0)
     {
-        std::cout << m.first << ": " << m.second << '\n';
+        std::cout << m.second << ": " << m.first << '\n';
     }
 }
-
-template<class T>
-void printV(const T& v0)
-{
-    std::cout << "\nprintV0\n";
-    for (const auto& v : v0)
-    {
-        std::cout << v << '\n';
-    }
-}
-
 
 int main()
 {
     setlocale(LC_ALL, "ru");
 
-    int numberOfRepetitions = 0;
-    std::string letters = "HHHHHHHello wwwwOERLDDDD";
-    std::map<char, int> m1;
+    size_t numberOfRepetitions = 0;
+    std::string letters = "HHHHello world!!";
+    std::multimap<size_t, char, std::greater<size_t>> m1;
     
-    std::cout << "Введите фразу:";
+    //std::cout << "Введите фразу:";
     //std::getline(std::cin, letters);
     
-    /*std::vector<char> vc1;
+    //создаем Ассоциативный контейнер s1
+    std::set<char> s1;
 
+    //заполняем Ассоциативный контейнер s1: char из letters
     for (size_t i = 0; i < letters.length(); i++)
     {
-        vc1.emplace_back(letters[i]);
-       
-    }*/
-    
-
-
-    for (size_t i = 0; i < letters.length(); i++)
-    {
-        numberOfRepetitions = std::count(letters.begin(), letters.end(), letters[i]);
-        m1.emplace(letters[i], numberOfRepetitions);
+        s1.insert(letters[i]);
     }
 
-    std::cout << std::endl << "letters.length() = " << letters.length();
-    std::cout << std::endl << "letters.size() = " << letters.size();
-
-    std::cout << std::endl << "Сортир M по значению " << letters.length();
-    printM(m1);
+    //заполняем Ассоциативный контейнер m1: ключ(кол-во повторений каждой буквы) значение сама буква
+    for (const auto& i : s1)
+    {
+        numberOfRepetitions = std::count(letters.begin(), letters.end(), i);
+        m1.emplace(numberOfRepetitions, i);
+    }
+    printM(m1, &letters);
 }
