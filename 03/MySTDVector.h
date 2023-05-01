@@ -24,8 +24,6 @@ public:
 	//copy constructor. Сonstructs a container with a copy of each of the elements in x, in the same order.
 	MySTDVector(const MySTDVector& other) : sizeOfVector_(other.size()), capacityOfVector_(other.capacity())
 	{
-		delete[] this->arr_;
-
 		//создаем новый массив2 длинной как массив1(other) с которого копируем.
 		arr_ = new T [other.size()] {};
 
@@ -101,15 +99,15 @@ public:
 		{
 			(arr_ + i)->~T();
 		}
-
-
-
-		delete[] reinterpret_cast<std::byte*>(this->arr_);
-		this->arr_ = newarr;
+		delete[] reinterpret_cast<int8_t*>(arr_);
+		arr_ = newarr;
 		capacityOfVector_ = newCapacityOfVector;
-
 	}
 
+		//delete[] reinterpret_cast<std::byte*>(this->arr_);
+		//this->arr_ = newarr;
+		
+	
 	void push_back(const T& value)
 	{
 		if (capacityOfVector_ == 0) reserve(++capacityOfVector_);
@@ -130,9 +128,9 @@ template<class T>
 void printVector(const MySTDVector<T>& v0)
 {
 	
-		std::cout << "capacity() = " << v0.capacity() << std::endl;
+	std::cout << "capacity() = " << v0.capacity() << std::endl;
 
-		std::cout << "size() = " << v0.size() << std::endl;
+	std::cout << "size() = " << v0.size() << std::endl;
 	
 	
 	for (size_t i = 0; i < v0.size(); i++)
