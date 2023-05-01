@@ -101,6 +101,9 @@ public:
 		{
 			(arr_ + i)->~T();
 		}
+		delete[] reinterpret_cast<int8_t*>(arr_);
+		arr_ = newarr;
+	}
 
 
 
@@ -109,7 +112,7 @@ public:
 		capacityOfVector_ = newCapacityOfVector;
 
 	}
-
+	
 	void push_back(const T& value)
 	{
 		if (capacityOfVector_ == 0) reserve(++capacityOfVector_);
