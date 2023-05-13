@@ -10,9 +10,6 @@ int main()
 {
     setlocale(LC_ALL, "ru");
 
-    MySTDVector vi1 = MySTDVector(5, 55);
-    vi1.push_back(5555);
-
     std::cout << "v1 = " << '\n';
     MySTDVector<int> v1;
     v1.push_back(111);
@@ -27,12 +24,7 @@ int main()
     v1.pop_back();
     printVector(v1);
 
-   
-    
-
-
-
-
+  
     try
     {
         std::cout << "v1(0) = " << v1.at(0) << '\t';
