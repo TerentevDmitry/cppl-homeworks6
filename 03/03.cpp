@@ -27,12 +27,7 @@ int main()
     v1.pop_back();
     printVector(v1);
 
-   
-    
-
-
-
-
+  
     try
     {
         std::cout << "v1(0) = " << v1.at(0) << '\t';

@@ -12,10 +12,10 @@ class MySTDVector
 	size_t capacityOfVector_ = 0;
 
 public:
-	MySTDVector(size_t n, const T& value = T()) { arr_ = new T; std::cout << "constructor(size_t) " << this << std::endl;
+	MySTDVector(size_t n, const T& value = T()) { arr_ = new T[n]; std::cout << "constructor(size_t) " << this << std::endl;
 	};
 		
-	MySTDVector() : sizeOfVector_(0), capacityOfVector_(0), arr_(new T) { std::cout << "constructor() " << this << std::endl; };
+	MySTDVector()/* : sizeOfVector_(0), capacityOfVector_(0), arr_(nullptr)*/ { std::cout << "constructor() " << this << std::endl; };
 	//
 	// 
 	//copy constructor. Сonstructs a container with a copy of each of the elements in x, in the same order.
@@ -26,7 +26,7 @@ public:
 		//копируем элементы из массив1(other) в массив2
 		for (size_t i = 0; i < other.sizeOfVector_; i++)
 		{
-			this->arr_[i] = other.arr_[i];
+			arr_[i] = other.arr_[i];
 		}
 		std::cout << "copy constructor(other) " << this << std::endl;
 		std::cout << std::endl;
@@ -138,8 +138,10 @@ public:
 
 	void push_back(const T& value)
 	{
+		if (arr_ == nullptr) arr_ = new T;
 		if (capacityOfVector_ == 0) reserve(++capacityOfVector_);
-		if (sizeOfVector_ == capacityOfVector_) reserve(2 * capacityOfVector_);
+		
+		if (sizeOfVector_ >= capacityOfVector_) reserve(2 * capacityOfVector_);
 		new(arr_ + sizeOfVector_) T(value);
 		++sizeOfVector_;
 	};
