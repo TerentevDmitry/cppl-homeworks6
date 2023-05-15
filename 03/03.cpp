@@ -10,7 +10,7 @@ int main()
 {
     setlocale(LC_ALL, "ru");
 
-    std::cout << "v1 = " << '\n';
+    std::cout << "v1 = ";
     MySTDVector<int> v1;
     v1.push_back(111);
     printVector(v1);
@@ -24,9 +24,9 @@ int main()
     v1.pop_back();
     printVector(v1);
 
-  
     try
     {
+        std::cout << "v1[0] = " << v1[0] << '\t';
         std::cout << "v1(0) = " << v1.at(0) << '\t';
         std::cout << "v1(1) = " << v1.at(v1.size() / 2) << '\t';
         std::cout << "v1(10) = " << v1.at(10) << '\t';
@@ -44,7 +44,7 @@ int main()
     {
         std::cout << ex.what() << std::endl << std::endl;
     }
-    
+
     std::cout << "v2 = ";
     MySTDVector<int> v2(v1);
     v2.push_back(211);
@@ -53,8 +53,8 @@ int main()
     printVector(v2);
     v2.pop_back();
     printVector(v2);
-
-    std::cout << "v3 = " << '\n';
+    
+    std::cout << "v3 = ";
     MySTDVector<double> v3;
     v3.push_back(311.1);
     v3.push_back(322.2);
@@ -63,7 +63,7 @@ int main()
     v3.pop_back();
     printVector(v3);
 
-    std::cout << "v4 = " << '\n';
+    std::cout << "v4 = ";
     MySTDVector<std::string> v4;
     v4.push_back("AAA");
     v4.push_back("BBB");
@@ -73,17 +73,21 @@ int main()
     printVector(v4);
 
     //move constr
+    std::cout << "v5 = ";
     MySTDVector<int> v5(std::move(v1));
     printVector(v5);
-
-    //copy metod delete
+    
+    //copy metod 
+    std::cout << "v6 = ";
     MySTDVector<int> v6;
-    //v6 = v5;
-
-    //move assigment 
-    v6 = std::move(v2);
+    std::cout << "v6 = v5 = ";
+    v6 = v5;
     printVector(v6);
 
+    ////move assigment 
+    std::cout << "v6(v2) = ";
+    v6 = std::move(v2);
+    printVector(v6);
 
    std::cout << "Hello World!\n";
 }
