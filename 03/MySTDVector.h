@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <vector>
+#include <utility>
 
 
 template<class T>
@@ -12,16 +13,19 @@ class MySTDVector
 	size_t capacityOfVector_ = 0;
 
 public:
-	MySTDVector(size_t n, const T& value = T()) { arr_ = new T[n]; std::cout << "constructor(size_t) " << this << std::endl;
-	};
+	//MySTDVector(size_t n, const T& value = T()) 
+	//{ arr_ = new T[n]; std::cout << "constructor(size_t) " << this << std::endl; };
 		
-	MySTDVector()/* : sizeOfVector_(0), capacityOfVector_(0), arr_(nullptr)*/ { std::cout << "constructor() " << this << std::endl; };
-	//
-	// 
-	//copy constructor. Сonstructs a container with a copy of each of the elements in x, in the same order.
-	MySTDVector(const MySTDVector& other) : sizeOfVector_(other.size()), capacityOfVector_(other.capacity()) {
+	MySTDVector() 
+	{ 
+		std::cout << "constructor() " << this << std::endl;
+	};
+	
+	//Copy constructor.
+	MySTDVector(const MySTDVector& other) 
+		: sizeOfVector_(other.sizeOfVector_), capacityOfVector_(other.capacityOfVector_) {
 		//создаем новый массив2 длинной как массив1(other) с которого копируем.
-		arr_ = new T [other.size()] {};
+		arr_ = new T[other.sizeOfVector_]{};
 
 		//копируем элементы из массив1(other) в массив2
 		for (size_t i = 0; i < other.sizeOfVector_; i++)
@@ -32,58 +36,51 @@ public:
 		std::cout << std::endl;
 	};
 
-	//move constructor.
-	MySTDVector(MySTDVector&& other) : sizeOfVector_(other.size()), capacityOfVector_(other.capacity()) {
+	//Copy assigment operator=.
+	MySTDVector& operator=(const MySTDVector& other)
+	{
+		//создаем новый массив2 длинной как массив1(other) с которого копируем.
+		arr_ = new T[other.sizeOfVector_]{};
+		sizeOfVector_ = other.sizeOfVector_;
+		capacityOfVector_ = other.capacityOfVector_;
+
+		//копируем элементы из массив1(other) в массив2
+		for (size_t i = 0; i < other.sizeOfVector_; i++)
+		{
+			arr_[i] = other.arr_[i];
+		}
+		std::cout << "copy assigment constructor(other) " << this << std::endl;
+		std::cout << std::endl;
+		return *this;
+	}
+
+
+
+	////move constructor.
+	MySTDVector(MySTDVector&& other) noexcept : sizeOfVector_(other.sizeOfVector_), capacityOfVector_(other.capacityOfVector_) {
 		
 		arr_ = other.arr_;
 		other.arr_ = nullptr;
+		other.capacityOfVector_ = 0;
+		other.sizeOfVector_ = 0;
 
 		std::cout << "move constructor(other) " << this << std::endl;
 		std::cout << std::endl;
 	};
 
-	
-
-	//Деструктор
-	~MySTDVector() {
-		//destroys all container elements
-		for (size_t i = 0; i < sizeOfVector_; ++i)
-		{
-			(arr_ + i)->~T();
-		}
-
-		arr_ = nullptr;
-		std::cout << "destructor " << this << std::endl;
-
-	};
-	
-
-
-	//Оператор []
-	T& operator[](size_t i) { return arr_[i]; };
-
-	// Метод at с проверкой индекса на out_of_range
-	T& at(size_t i) 
-	{ 
-		if (i >= sizeOfVector_) throw std::out_of_range("out_of_range");
-		return arr_[i];
-	};
-
-	//Оператор () запрещен
-	T& operator()(size_t i) = delete;
-
-	//Удаление функции копирования одного объекта в другой
-	T& operator=(const MySTDVector& other) = delete;
-
+	//
 
 	//move assigment operator=.
-	MySTDVector& operator=(MySTDVector&& other) {
+	MySTDVector& operator=(MySTDVector&& other) noexcept {
 	
 		if (arr_ == other.arr_)
 			return *this;
 		
+		other.capacityOfVector_ = 0;
+		other.sizeOfVector_ = 0;
 		arr_ = other.arr_;
 		other.arr_ = nullptr;
+		
 
 		std::cout << "move assigment operator= " << this << std::endl;
 		std::cout << std::endl;
@@ -92,9 +89,40 @@ public:
 
 
 
+
+
+
+
+	//************************************************
+
+	//Destructor
+	~MySTDVector() 
+	{
+		
+		sizeOfVector_ = 0;
+		capacityOfVector_ = 0;
+		//delete[] arr_;
+		arr_ = nullptr;
+		std::cout << "destructor " << this << std::endl;
+
+	};
+
+	//Оператор () запрещен
+	T& operator()(size_t i) = delete;
+
+	//Оператор []
+	T& operator[](size_t i) { return arr_[i]; };
+
 	//Константный Оператор []
 	const T& operator[](size_t i) const { return arr_[i]; };
 
+	// Метод at с проверкой индекса на out_of_range
+	T& at(size_t i)
+	{
+		if (i >= sizeOfVector_) throw std::out_of_range("out_of_range");
+		return arr_[i];
+	};
+	
 	//Константный Метод at с проверкой индекса на out_of_range
 	const T& at(size_t i) const
 	{
@@ -116,40 +144,36 @@ public:
 	{
 		if (newCapacityOfVector <= capacityOfVector_) return;
 
-		T* newarr = reinterpret_cast<T*>(new int8_t[newCapacityOfVector * sizeof(T)]);
-		try
-		{ 
-		std::uninitialized_copy(arr_, arr_ + sizeOfVector_, newarr);
-		}
-		catch (...)
-		{
-			delete[] reinterpret_cast<std::byte*>(arr_);
-			throw;
-		}
+		T* newarr = new T[newCapacityOfVector];
 
-		for (size_t i = 0; i < sizeOfVector_; ++i)
+		for (size_t i = 0; i < sizeOfVector_; i++)
 		{
-			(arr_ + i)->~T();
+			newarr[i] = arr_[i];
 		}
-		delete[] reinterpret_cast<int8_t*>(arr_);
+		delete[] arr_;
 		arr_ = newarr;
 		capacityOfVector_ = newCapacityOfVector;
 	}
 
 	void push_back(const T& value)
 	{
-		if (arr_ == nullptr) arr_ = new T;
-		if (capacityOfVector_ == 0) reserve(++capacityOfVector_);
+		if (arr_ == nullptr)
+		{
+			capacityOfVector_ = 1;
+			arr_ = new T[capacityOfVector_];
+		}
 		
-		if (sizeOfVector_ >= capacityOfVector_) reserve(2 * capacityOfVector_);
-		new(arr_ + sizeOfVector_) T(value);
+		if (capacityOfVector_ == sizeOfVector_)
+		{
+			reserve(2 * capacityOfVector_);
+		}
+		arr_[sizeOfVector_] = value;
 		++sizeOfVector_;
 	};
 
 	void pop_back()
 	{
 		if (sizeOfVector_ == 0) throw std::out_of_range("there_are_no_values_in_the_vector");
-		(arr_ + sizeOfVector_ - 1)->~T();
 		--sizeOfVector_;
 	};
 };
@@ -157,9 +181,7 @@ public:
 template<class T>
 void printVector(const MySTDVector<T>& v0)
 {
-	
 	std::cout << "capacityOfVector_() = " << v0.capacity() << std::endl;
-
 	std::cout << "sizeOfVector_ = " << v0.size() << std::endl;
 	
 	for (size_t i = 0; i < v0.size(); i++)
