@@ -40,7 +40,7 @@ public:
 	MySTDVector& operator=(const MySTDVector& other)
 	{
 		if (arr_ == other.arr_)
-			return *std::move(this);
+			return *this;
 		if (arr_)
 			delete arr_;
 
